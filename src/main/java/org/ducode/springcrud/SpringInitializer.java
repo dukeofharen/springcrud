@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 public class SpringInitializer implements WebApplicationInitializer {
+    @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.scan("org.ducode.springcrud.config");
