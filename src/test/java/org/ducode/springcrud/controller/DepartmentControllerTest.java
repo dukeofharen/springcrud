@@ -2,6 +2,7 @@ package org.ducode.springcrud.controller;
 
 import org.ducode.springcrud.config.WebConfig;
 import org.ducode.springcrud.dto.DepartmentDto;
+import org.ducode.springcrud.exception.CustomExceptionHandler;
 import org.ducode.springcrud.models.Department;
 import org.ducode.springcrud.transformer.DepartmentTransformer;
 import org.junit.Before;
@@ -39,11 +40,13 @@ public class DepartmentControllerTest {
     public void setUp() throws Exception {
         departmentTransformer = mock(DepartmentTransformer.class);
         departmentController = new DepartmentController(departmentTransformer);
-        mockMvc = MockMvcBuilders.standaloneSetup(departmentController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(departmentController)
+                .setControllerAdvice(new CustomExceptionHandler())
+                .build();
     }
 
     @Test
-    public void getGepartment() throws Exception {
+    public void getDepartment() throws Exception {
         Department department = new Department("test");
         departmentController.departments.add(department);
         when(departmentTransformer.toDto(department)).thenReturn(new DepartmentDto(department.getName()));
@@ -64,5 +67,16 @@ public class DepartmentControllerTest {
                 .andExpect(status().isCreated());
 
         assertEquals(1, departmentController.departments.size());
+    }
+
+    @Test
+    public void createDepartmentInvalidName() throws Exception {
+        String name = "illegalDep";
+
+        mockMvc.perform(post("/api/department")
+        .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\": \""+name+"\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("This name is not valid.")));
     }
 }

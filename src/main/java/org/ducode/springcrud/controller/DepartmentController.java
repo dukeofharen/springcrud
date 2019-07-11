@@ -4,11 +4,9 @@ import org.ducode.springcrud.dto.DepartmentDto;
 import org.ducode.springcrud.models.Department;
 import org.ducode.springcrud.transformer.DepartmentTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,17 +25,21 @@ public class DepartmentController {
     }
 
     @GetMapping("/api/department")
-    public ResponseEntity<List<DepartmentDto>> getGepartment() {
+    public List<DepartmentDto> getGepartment() {
         List<DepartmentDto> dtos = new ArrayList<>();
         for (Department dep : departments) {
             dtos.add(transformer.toDto(dep));
         }
 
-        return ResponseEntity.ok(dtos);
+        return dtos;
     }
 
     @PostMapping("/api/department")
     public ResponseEntity createDepartment(@RequestBody DepartmentDto dto) {
+        if (dto.getName().equals("illegalDep")) {
+            throw new IllegalArgumentException("This name is not valid.");
+        }
+
         departments.add(this.transformer.toModel(dto));
 
         return ResponseEntity.created(URI.create("")).build();
