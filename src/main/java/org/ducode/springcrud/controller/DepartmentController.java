@@ -11,27 +11,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class DepartmentController {
     private DepartmentTransformer transformer;
 
+    List<Department> departments;
+
     @Autowired
     public DepartmentController(DepartmentTransformer transformer) {
         this.transformer = transformer;
+        this.departments = new ArrayList<>();
     }
 
     @GetMapping("/api/department")
-    public ResponseEntity<DepartmentDto> getGepartment() {
-        Department dep = new Department("Test");
-        DepartmentDto dto = this.transformer.toDto(dep);
+    public ResponseEntity<List<DepartmentDto>> getGepartment() {
+        List<DepartmentDto> dtos = new ArrayList<>();
+        for (Department dep : departments) {
+            dtos.add(transformer.toDto(dep));
+        }
 
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dtos);
     }
 
     @PostMapping("/api/department")
     public ResponseEntity createDepartment(@RequestBody DepartmentDto dto) {
-        Department dep = this.transformer.toModel(dto);
+        departments.add(this.transformer.toModel(dto));
 
         return ResponseEntity.created(URI.create("")).build();
     }
