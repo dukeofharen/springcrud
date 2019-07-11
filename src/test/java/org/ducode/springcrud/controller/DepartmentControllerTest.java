@@ -4,6 +4,7 @@ import org.ducode.springcrud.config.WebConfig;
 import org.ducode.springcrud.dto.DepartmentDto;
 import org.ducode.springcrud.exception.CustomExceptionHandler;
 import org.ducode.springcrud.models.Department;
+import org.ducode.springcrud.service.DepartmentService;
 import org.ducode.springcrud.transformer.DepartmentTransformer;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,11 +16,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Collections;
+
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -36,10 +37,13 @@ public class DepartmentControllerTest {
 
     private DepartmentTransformer departmentTransformer;
 
+    private DepartmentService departmentService;
+
     @Before
     public void setUp() throws Exception {
         departmentTransformer = mock(DepartmentTransformer.class);
-        departmentController = new DepartmentController(departmentTransformer);
+        departmentService = mock(DepartmentService.class);
+        departmentController = new DepartmentController(departmentTransformer, departmentService);
         mockMvc = MockMvcBuilders.standaloneSetup(departmentController)
                 .setControllerAdvice(new CustomExceptionHandler())
                 .build();
@@ -48,7 +52,7 @@ public class DepartmentControllerTest {
     @Test
     public void getDepartment() throws Exception {
         Department department = new Department("test");
-        departmentController.departments.add(department);
+        when(departmentService.getDepartments()).thenReturn(Collections.singletonList(department));
         when(departmentTransformer.toDto(department)).thenReturn(new DepartmentDto(department.getName()));
 
         mockMvc.perform(get("/api/department"))
@@ -59,24 +63,14 @@ public class DepartmentControllerTest {
     @Test
     public void createDepartment() throws Exception {
         String name = "administration";
-        when(departmentTransformer.toModel(any(DepartmentDto.class))).thenReturn(new Department(name));
+        Department department = new Department(name);
+        when(departmentTransformer.toModel(any(DepartmentDto.class))).thenReturn(department);
 
         mockMvc.perform(post("/api/department")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\": \""+name+"\"}"))
                 .andExpect(status().isCreated());
 
-        assertEquals(1, departmentController.departments.size());
-    }
-
-    @Test
-    public void createDepartmentInvalidName() throws Exception {
-        String name = "illegalDep";
-
-        mockMvc.perform(post("/api/department")
-        .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\": \""+name+"\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("This name is not valid.")));
+        verify(departmentService).createDepartment(department);
     }
 }

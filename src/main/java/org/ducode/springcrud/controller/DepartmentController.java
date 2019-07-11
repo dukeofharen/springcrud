@@ -2,9 +2,9 @@ package org.ducode.springcrud.controller;
 
 import org.ducode.springcrud.dto.DepartmentDto;
 import org.ducode.springcrud.models.Department;
+import org.ducode.springcrud.service.DepartmentService;
 import org.ducode.springcrud.transformer.DepartmentTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,18 +16,20 @@ import java.util.List;
 public class DepartmentController {
     private DepartmentTransformer transformer;
 
-    List<Department> departments;
+    private DepartmentService departmentService;
 
     @Autowired
-    public DepartmentController(DepartmentTransformer transformer) {
+    public DepartmentController(
+            DepartmentTransformer transformer,
+            DepartmentService departmentService) {
         this.transformer = transformer;
-        this.departments = new ArrayList<>();
+        this.departmentService = departmentService;
     }
 
     @GetMapping("/api/department")
     public List<DepartmentDto> getGepartment() {
         List<DepartmentDto> dtos = new ArrayList<>();
-        for (Department dep : departments) {
+        for (Department dep : departmentService.getDepartments()) {
             dtos.add(transformer.toDto(dep));
         }
 
@@ -36,11 +38,8 @@ public class DepartmentController {
 
     @PostMapping("/api/department")
     public ResponseEntity createDepartment(@RequestBody DepartmentDto dto) {
-        if (dto.getName().equals("illegalDep")) {
-            throw new IllegalArgumentException("This name is not valid.");
-        }
-
-        departments.add(this.transformer.toModel(dto));
+        Department department = this.transformer.toModel(dto);
+        departmentService.createDepartment(department);
 
         return ResponseEntity.created(URI.create("")).build();
     }
