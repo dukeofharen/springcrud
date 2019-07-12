@@ -1,9 +1,12 @@
 package org.ducode.springcrud.service;
 
 import org.ducode.springcrud.models.Department;
+import org.ducode.springcrud.repository.DepartmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,23 +15,19 @@ import java.util.List;
 @Validated
 public class DepartmentService {
 
-    List<Department> departments;
+    private DepartmentRepository departmentRepository;
 
-    public DepartmentService() {
-        this.departments = new ArrayList<>();
+    @Autowired
+    public DepartmentService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
     }
 
     public List<Department> getDepartments() {
-        return departments;
+        return departmentRepository.getDepartments();
     }
 
+    @Transactional
     public boolean createDepartment(@Valid Department department) {
-        for (Department dep : departments) {
-            if (dep.getName().equals(department.getName())) {
-                return false;
-            }
-        }
-
-        return departments.add(department);
+        return departmentRepository.createDepartment(department);
     }
 }
