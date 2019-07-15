@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Duco Winterwerp
+      changes:
+        - createTable:
+            tableName: Department
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+        - createTable:
+            tableName: Employee
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: department_id
+                  type: bigint
+        - addForeignKeyConstraints:
+            constraintName: fk_dep_emp
+            baseTableName: Employee
+            baseColumnName: department_id
+            referencedTableName: Department
+            referencedColumNames: id
+  - changeSet:
+      id: 2
+      author: Duco Winterwerp
+      changes:
+        - loadData:
+            tableName: Department
+            file: db/departments.csv
+        - loadData:
+            tableName: Employee
+            file: db/employees.csv

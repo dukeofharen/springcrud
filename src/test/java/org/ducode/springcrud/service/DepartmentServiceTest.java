@@ -4,22 +4,25 @@ import org.ducode.springcrud.models.Department;
 import org.ducode.springcrud.repository.DepartmentRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DepartmentServiceTest {
 
+    @Mock
     private DepartmentRepository departmentRepository;
 
     private DepartmentService departmentService;
 
     @Before
     public void setUp() throws Exception {
-        departmentRepository = mock(DepartmentRepository.class);
+        initMocks(this);
         departmentService = new DepartmentService(departmentRepository);
     }
 
@@ -34,6 +37,8 @@ public class DepartmentServiceTest {
         when(departmentRepository.getDepartments()).thenReturn(departmentsFromRepository);
 
         List<Department> departments = departmentService.getDepartments();
+
+        verify(departmentRepository, times(1)).getDepartments();
         assertEquals(departmentsFromRepository, departments);
     }
 
@@ -46,6 +51,6 @@ public class DepartmentServiceTest {
 
         boolean success = departmentService.createDepartment(department);
         assertTrue(success);
-        verify(departmentRepository).createDepartment(department);
+        verify(departmentRepository, times(1)).createDepartment(department);
     }
 }

@@ -1,11 +1,10 @@
 package org.ducode.springcrud.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class EmployeeDto {
-    @Getter
-    @Setter
     private String name;
 }
