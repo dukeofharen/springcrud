@@ -51,9 +51,14 @@ public class DepartmentControllerTest {
 
     @Test
     public void getDepartment() throws Exception {
-        Department department = new Department("test");
+        Department department = new Department();
+        department.setName("test");
+
+        DepartmentDto dto = new DepartmentDto();
+        dto.setName(department.getName());
+
         when(departmentService.getDepartments()).thenReturn(Collections.singletonList(department));
-        when(departmentTransformer.toDto(department)).thenReturn(new DepartmentDto(department.getName()));
+        when(departmentTransformer.toDto(department)).thenReturn(dto);
 
         mockMvc.perform(get("/api/department"))
                 .andExpect(status().isOk())
@@ -63,7 +68,9 @@ public class DepartmentControllerTest {
     @Test
     public void createDepartment() throws Exception {
         String name = "administration";
-        Department department = new Department(name);
+        Department department = new Department();
+        department.setName(name);
+
         when(departmentTransformer.toModel(any(DepartmentDto.class))).thenReturn(department);
 
         mockMvc.perform(post("/api/department")

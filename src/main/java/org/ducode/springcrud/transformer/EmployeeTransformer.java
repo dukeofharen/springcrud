@@ -8,11 +8,15 @@ import org.springframework.stereotype.Component;
 public class EmployeeTransformer implements Transformer<Employee, EmployeeDto> {
     @Override
     public Employee toModel(EmployeeDto dto) {
-        return new Employee(dto.getName());
+        Employee employee = new Employee();
+        employee.setName(dto.getName());
+        return employee;
     }
 
     @Override
     public EmployeeDto toDto(Employee model) {
-        return new EmployeeDto(model.getName());
+        EmployeeDto dto = new EmployeeDto();
+        dto.setName(model.getName());
+        return dto;
     }
 }

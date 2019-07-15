@@ -13,8 +13,12 @@ import java.util.stream.Collectors;
 @Component
 public class DepartmentTransformer implements Transformer<Department, DepartmentDto> {
 
-    @Autowired
     private EmployeeTransformer employeeTransformer;
+
+    @Autowired
+    public DepartmentTransformer(EmployeeTransformer employeeTransformer) {
+        this.employeeTransformer = employeeTransformer;
+    }
 
     @Override
     public Department toModel(DepartmentDto dto) {

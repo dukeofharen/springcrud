@@ -26,7 +26,11 @@ public class DepartmentServiceTest {
     @Test
     public void getDepartments() {
         List<Department> departmentsFromRepository = new ArrayList<>();
-        departmentsFromRepository.add(new Department("testDepartment"));
+
+        Department department = new Department();
+        department.setName("testDepartment");
+
+        departmentsFromRepository.add(department);
         when(departmentRepository.getDepartments()).thenReturn(departmentsFromRepository);
 
         List<Department> departments = departmentService.getDepartments();
@@ -35,7 +39,9 @@ public class DepartmentServiceTest {
 
     @Test
     public void createDepartment() {
-        Department department = new Department("testDep");
+        Department department = new Department();
+        department.setName("testDep");
+
         when(departmentRepository.createDepartment(department)).thenReturn(true);
 
         boolean success = departmentService.createDepartment(department);
