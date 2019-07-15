@@ -9,12 +9,17 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+/**
+ * This class is used to initialize the application for use in a Servlet container (e.g. Tomcat or Jetty).
+ */
 public class SpringInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+        // This method searches for @Configuration annotations and processes them.
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.scan("org.ducode.springcrud.config");
 
+        // Spring bootstrapping.
         servletContext.addListener(new ContextLoaderListener(context));
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", new DispatcherServlet(context));
         dispatcher.setLoadOnStartup(1);
