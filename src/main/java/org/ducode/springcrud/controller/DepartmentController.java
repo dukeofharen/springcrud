@@ -6,6 +6,7 @@ import org.ducode.springcrud.service.DepartmentService;
 import org.ducode.springcrud.transformer.DepartmentTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,6 +37,7 @@ public class DepartmentController {
         return dtos;
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/api/department")
     public ResponseEntity createDepartment(@RequestBody DepartmentDto dto) {
         Department department = this.transformer.toModel(dto);
