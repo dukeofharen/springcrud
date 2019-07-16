@@ -1,6 +1,6 @@
 package org.ducode.springcrud.controller;
 
-import org.ducode.springcrud.config.WebConfig;
+import org.ducode.springcrud.config.TestConfig;
 import org.ducode.springcrud.dto.DepartmentDto;
 import org.ducode.springcrud.exception.CustomExceptionHandler;
 import org.ducode.springcrud.models.Department;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = WebConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class DepartmentControllerTest {
 
     private MockMvc mockMvc;
